@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 pinyin = "^0.4.0"
+googletrans = "^4.0.2"
 
 
 [build-system]
