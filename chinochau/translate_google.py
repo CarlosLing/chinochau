@@ -21,6 +21,10 @@ async def translate_google(word: str) -> List[str]:
             return definition
 
 
+def translate_google_sync(example):
+    return asyncio.run(translate_google(example))
+
+
 if __name__ == "__main__":
     x = asyncio.run(translate_google(example_input))
     print(x)

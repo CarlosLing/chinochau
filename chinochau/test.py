@@ -2,7 +2,7 @@ import pinyin
 from pinyin.cedict import translate_word
 
 with open("input.txt", "r") as f:
-    raw = f.read().replace("- ", "")
+    raw = f.read().replace("-", "").replace(" ", "")
     examples = raw.split("\n")
 
 with open("output_pretty.txt", "w") as f:
