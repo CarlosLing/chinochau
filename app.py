@@ -7,7 +7,8 @@ if "show_pinyin" not in st.session_state:
 if "show_definition" not in st.session_state:
     st.session_state.show_definition = False
 
-chino = ChinoChau("input.txt", fill_null_definitions=False)
+chino = ChinoChau("input.txt", fill_null_definitions=True)
+chino.update_master_flashcards()
 example = chino.get(0)
 
 chinese = example.chinese

@@ -1,6 +1,6 @@
 import pinyin
 from pinyin.cedict import translate_word
-from chinochau.data import Flashcard
+from chinochau.data import Flashcard, MasterFlashcards
 from chinochau.translate_google import translate_google_sync
 
 
@@ -14,6 +14,7 @@ class ChinoChau:
     ):
         self.generate_examples = generate_examples
         self.fill_null_definitions = fill_null_definitions
+        self.master_flashcards = MasterFlashcards()
         self.load_file(source_file=source_file)
 
     def load_file(self, source_file):
@@ -41,5 +42,13 @@ class ChinoChau:
             chinese=chinese, pinyin=f_pinyin, definitions=f_definition, example=example
         )
 
+    def update_master_flashcards(self):
+        self.master_flashcards.import_flashcards(self.flashcards)
+
     def get(self, index: int) -> Flashcard:
+        if len(self) <= index:
+            raise ValueError("Index for flashcards out of bounds")
         return self.flashcards[index]
+
+    def __len__(self):
+        return len(self.flashcards)

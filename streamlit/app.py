@@ -8,6 +8,7 @@ if "show_string3" not in st.session_state:
     st.session_state.show_string3 = False
 
 chino = ChinoChau("input.txt")
+chino.update_master_flashcards()
 example = chino.get(0)
 
 chinese = example.chinese
