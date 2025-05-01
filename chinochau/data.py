@@ -9,11 +9,13 @@ from dataclasses import fields
 class Flashcard:
     chinese: str
     pinyin: str
-    definitions: List[str] = None
+    definitions: List[str]
     example: str = None
 
 
 class MasterFlashcards:
+    flashcards_dataframe: pd.DataFrame
+
     """This class will contain the master Flashcards the main goal
     is to have caching of Flashcards to avoid reaching the Deepseek
     endpoints too often therefore saving cost"""
@@ -47,3 +49,6 @@ class MasterFlashcards:
 
     def save_flashcards(self):
         self.flashcards_dataframe.to_csv(self._file_path)
+
+    def get_flashcards_list(self) -> List[Flashcard]:
+        raise NotImplementedError("TODO: Get flashcard list from a pandas dataframe")

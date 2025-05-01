@@ -1,4 +1,5 @@
 import pinyin
+import os
 from pinyin.cedict import translate_word
 from chinochau.data import Flashcard, MasterFlashcards
 from chinochau.translate_google import translate_google_sync
@@ -18,16 +19,20 @@ class ChinoChau:
         self.load_file(source_file=source_file)
 
     def load_file(self, source_file):
-        with open(source_file, "r") as f:
-            raw = f.read().replace("-", "").replace(" ", "")
-            examples = raw.split("\n")
-        flashcards = []
-        for example in examples:
-            flashcards.append(self.create_flashcard(example))
+        if os.path.exists(source_file):
+            with open(source_file, "r") as f:
+                raw = f.read().replace("-", "").replace(" ", "")
+                examples = raw.split("\n")
+            flashcards = []
+            for example in examples:
+                flashcards.append(self.create_flashcard(example))
 
-        self.flashcards = flashcards
+            self.flashcards = flashcards
+        else:
+            print("File not available, using all master flashcards")
+            self.flashcards = self.master_flashcards.get_flashcards_list()
 
-    def create_flashcard(self, chinese: str):
+    def create_flashcard(self, chinese: str) -> Flashcard:
         f_pinyin = pinyin.get(chinese)
         f_definition = translate_word(chinese)
         if f_definition is None and self.fill_null_definitions:
