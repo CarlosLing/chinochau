@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass
-from typing import List
+from typing import List, Union
 import pandas as pd
 from dataclasses import fields
 
@@ -14,7 +14,7 @@ class Flashcard:
 
 
 class MasterFlashcards:
-    flashcards_dataframe: pd.DataFrame
+    flashcards: dict
 
     """This class will contain the master Flashcards the main goal
     is to have caching of Flashcards to avoid reaching the Deepseek
@@ -25,8 +25,7 @@ class MasterFlashcards:
             raise ValueError("For the master datasource only '.csv' is supported")
         self._file_path = file
         if os.path.exists(file):
-            self.flashcards_dataframe = pd.read_csv(file, index_col=0)
-            # Add validation here for columns
+            self.flashcards_dataframe = pd.read_csv(file, index_col="chinese")
             if not set(self.flashcards_dataframe.columns) == {
                 field.name for field in fields(Flashcard)
             }:
@@ -35,9 +34,8 @@ class MasterFlashcards:
                     f"Schema of the master data is invalid, {set(self.flashcards_dataframe.columns)}"
                 )
         else:
-            column_names = [field.name for field in fields(Flashcard)]
-            self.flashcards_dataframe = pd.DataFrame(columns=column_names)
-        self.words = set(self.flashcards_dataframe.chinese)
+            self.flashcards = {}
+        self.words = self.flashcards.keys()
 
     def import_flashcards(self, flashcards=List[Flashcard]):
         new_flashcards = pd.DataFrame(
@@ -48,7 +46,15 @@ class MasterFlashcards:
         self.save_flashcards()
 
     def save_flashcards(self):
-        self.flashcards_dataframe.to_csv(self._file_path)
+        dataframe = pd.DataFrame.from_dict(self.flashcards, orient="index")
+        dataframe.to_csv(self._file_path)
+
+    def get(self, chinese: str) -> Union[Flashcard, None]:
+        data = self.flashcards.get(chinese)
+        if data is None:
+            return None
+        else:
+            return Flashcard(chinese, **data)
 
     def get_flashcards_list(self) -> List[Flashcard]:
         raise NotImplementedError("TODO: Get flashcard list from a pandas dataframe")
