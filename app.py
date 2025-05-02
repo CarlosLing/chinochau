@@ -31,6 +31,12 @@ if st.button("Submit"):
 
 st.header(f"Flashcard index {st.session_state.index} of {len(st.session_state.chino)}")
 
+direct_input = st.text_input(
+    "Create Flashcard from word", placeholder="Add chinese word"
+)
+
+if st.button("Create New Flashcard"):
+    st.session_state.flashcard = st.session_state.chino.create_flashcard(direct_input)
 
 c1, c2 = st.columns(2)
 with c1:
@@ -83,7 +89,9 @@ if st.button("Get Examples"):
     if st.session_state.flashcard.example is not None:
         st.session_state.examples = st.session_state.flashcard.example
     else:
-        new_examples = get_examples_deepseek(st.session_state.flashcard.chinese)
+        new_examples = get_examples_deepseek(
+            st.session_state.flashcard.chinese, number_of_examples=5
+        )
         st.session_state.flashcard.example = new_examples
         st.session_state.examples = st.session_state.flashcard.example
 
