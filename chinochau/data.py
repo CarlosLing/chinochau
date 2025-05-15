@@ -35,6 +35,7 @@ class MasterFlashcards:
                 )
         else:
             self.flashcards = {}
+            self.flashcards_dataframe = pd.DataFrame(columns=[field.name for field in fields(Flashcard)])
         self.words = self.flashcards.keys()
 
     def import_flashcards(self, flashcards=List[Flashcard]):
