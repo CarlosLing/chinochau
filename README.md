@@ -47,11 +47,11 @@ Tools for learning Chinese with interactive flashcards.
 ## How to Start the Backend
 1. Requirements:
    ```sh
-   poetry install
+   make install
    ```
 2. Start the FastAPI server:
    ```sh
-   poetry run uvicorn backend.main:app --reload
+   make run-backend
    ```
 3. The API will be available at `http://127.0.0.1:8000` and docs at `http://127.0.0.1:8000/docs`
 

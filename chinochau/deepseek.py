@@ -1,6 +1,6 @@
 from openai import OpenAI
 
-
+# TODO: Use langchain to enforce stricter typing. -> Get a list of examples instead of a string
 with open("api_key.txt", "r") as f:
     key = f.read()
 
