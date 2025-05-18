@@ -5,7 +5,6 @@
 help:
 	@echo "Available commands:"
 	@echo "  install      Install all dependencies using Poetry"
-	@echo "  run-app      Run the Streamlit frontend app"
 	@echo "  run-backend  Run the FastAPI backend server"
 	@echo "  lint         Run flake8 linter on the codebase"
 	@echo "  test         Run all tests"

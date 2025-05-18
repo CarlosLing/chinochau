@@ -3,7 +3,6 @@
 Tools for learning Chinese with interactive flashcards.
 
 ## Features
-- Interactive Streamlit web app for reviewing and creating Chinese flashcards (legacy)
 - Modern FastAPI backend for flashcard management (CRUD)
 - React + TypeScript Vite frontend for studying and adding flashcards
 - Flashcards include Chinese, pinyin, definitions, and example sentences
