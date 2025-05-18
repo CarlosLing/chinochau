@@ -3,57 +3,63 @@
 Tools for learning Chinese with interactive flashcards.
 
 ## Features
-- Interactive Streamlit web app for reviewing and creating Chinese flashcards
+- Interactive Streamlit web app for reviewing and creating Chinese flashcards (legacy)
+- Modern FastAPI backend for flashcard management (CRUD)
+- React + TypeScript Vite frontend for studying and adding flashcards
 - Flashcards include Chinese, pinyin, definitions, and example sentences
 - Definitions sourced from local dictionary or Google Translate fallback
 - Example sentences generated via Deepseek API (OpenAI-compatible)
-- Flashcards are cached in a CSV to minimize API usage
+- Flashcards are cached in a CSV and stored in SQLite to minimize API usage
 - Modular code for data, translation, and example management
 
 ## Usage
-1. Install dependencies (recommended: use Poetry):
-   ```sh
-   poetry install
-   ```
-2. Run the Streamlit app:
-   ```sh
-   poetry run streamlit run app.py
-   ```
-3. Add or review words using the web interface. Input files should list one Chinese word per line.
+
+
+### Backend (FastAPI)
+To set up and run the backend, simply use the Makefile commands:
+
+```sh
+make install        # Install all Python dependencies
+make run-backend    # Start the FastAPI backend server
+```
+The API will be available at `http://127.0.0.1:8000` and docs at `http://127.0.0.1:8000/docs`
+
+
+### Frontend (React + Vite)
+Make sure you have Node.js (v18 or newer) and npm installed. You can use `nvm use 20` to switch to the correct version if you use nvm.
+
+To start the frontend development server, use the Makefile command:
+
+```sh
+make run-frontend
+```
+Then open [http://localhost:5173](http://localhost:5173) in your browser.
+
+
+---
 
 ## Project Structure
-- `app.py`: Streamlit web app
+- `backend/`: FastAPI backend and database models
 - `chinochau/`: Core logic (data, translation, example generation)
+- `frontend/`: React + TypeScript Vite frontend
 - `input.txt`: Example input file
 - `tests/`: Test scripts
+- `Makefile`: Common commands for development
 
-## Backend Migration (FastAPI)
+## API
+- The backend exposes endpoints for flashcard CRUD and example generation
+- See `frontend/src/api/flashcards.ts` for usage examples
 
-### Current Changes
-- Added `backend/main.py` with a FastAPI app exposing endpoints for:
-  - Retrieving all flashcards (to be implemented)
-  - Retrieving a single flashcard by Chinese word
-  - Creating a new flashcard
-  - Getting example sentences for a word
-- Reused core logic from `chinochau/` in the API endpoints
+## Development Status
+- [x] FastAPI backend with CORS and SQLite support
+- [x] React frontend with flashcard study and add UI
+- [x] Modular core logic for translation and examples
+- [x] Database and CSV caching
+- [ ] Full CRUD API (some endpoints may be incomplete)
+- [ ] More robust error handling and tests
 
-### Next Steps
-- Implement the `/flashcards` GET endpoint to return all flashcards from the data source
-- Add persistent database support (e.g., SQLite or PostgreSQL)
-- Add CORS middleware for frontend integration
-- Write tests for the API endpoints
-- Scaffold the React frontend and connect it to the backend
-
-## How to Start the Backend
-1. Requirements:
-   ```sh
-   make install
-   ```
-2. Start the FastAPI server:
-   ```sh
-   make run-backend
-   ```
-3. The API will be available at `http://127.0.0.1:8000` and docs at `http://127.0.0.1:8000/docs`
+## Contributing
+PRs and issues are welcome!
 
 ## License
 MIT License
