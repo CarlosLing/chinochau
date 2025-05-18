@@ -14,6 +14,7 @@ watchdog = "^6.0.0"
 sqlalchemy = "^2.0.30"
 fastapi = "^0.115.12"
 uvicorn = "^0.34.2"
+langchain-core = "^0.3.60"
 
 
 [build-system]
