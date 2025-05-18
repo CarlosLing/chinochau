@@ -1,12 +1,13 @@
-import pinyin
 import os
+
+import pinyin
 from pinyin.cedict import translate_word
+
 from chinochau.data import Flashcard, MasterFlashcards
-from chinochau.translate_google import translate_google_sync
+from chinochau.translate_google import translate_google
 
 
 class ChinoChau:
-
     def __init__(
         self,
         source_file,
@@ -16,27 +17,31 @@ class ChinoChau:
         self.generate_examples = generate_examples
         self.fill_null_definitions = fill_null_definitions
         self.master_flashcards = MasterFlashcards()
-        self.load_file(source_file=source_file)
+        self.flashcards = []  # Initialize as empty; load_file will fill it
+        self.source_file = source_file  # Store for later async loading
 
-    def load_file(self, source_file):
+    async def load_file(self, source_file=None):
+        if source_file is None:
+            source_file = self.source_file
         if os.path.exists(source_file):
             with open(source_file, "r") as f:
                 raw = f.read().replace("-", "").replace(" ", "")
                 examples = raw.split("\n")
             flashcards = []
             for example in examples:
-                flashcards.append(self.create_flashcard(example))
-
+                if example.strip():
+                    flashcard = await self.create_flashcard(example)
+                    flashcards.append(flashcard)
             self.flashcards = flashcards
         else:
             print("File not available, using all master flashcards")
             self.flashcards = self.master_flashcards.get_flashcards_list()
 
-    def create_flashcard(self, chinese: str) -> Flashcard:
+    async def create_flashcard(self, chinese: str) -> Flashcard:
         f_pinyin = pinyin.get(chinese)
         f_definition = translate_word(chinese)
         if f_definition is None and self.fill_null_definitions:
-            f_definition = translate_google_sync(chinese)
+            f_definition = await translate_google(chinese)
 
         if self.generate_examples:
             raise NotImplementedError("Example generation has not been implemented yet")

@@ -1,8 +1,7 @@
 from typing import List
-import asyncio
-from pinyin.cedict import translate_word
-from googletrans import Translator
 
+from googletrans import Translator
+from pinyin.cedict import translate_word
 
 example_input = "数不清的"
 # Uncountable
@@ -21,10 +20,8 @@ async def translate_google(word: str) -> List[str]:
             return definition
 
 
-def translate_google_sync(example):
-    return asyncio.run(translate_google(example))
-
-
 if __name__ == "__main__":
+    import asyncio
+
     x = asyncio.run(translate_google(example_input))
     print(x)
