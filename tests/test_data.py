@@ -1,6 +1,6 @@
-from chinochau.data import MasterFlashcards
-
 import pandas as pd
+
+from chinochau.data import MasterFlashcards
 
 data = pd.read_csv("data/master.csv")
 

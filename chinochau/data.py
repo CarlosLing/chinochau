@@ -1,8 +1,8 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from typing import List, Union
+
 import pandas as pd
-from dataclasses import fields
 
 
 @dataclass

@@ -1,24 +1,22 @@
-from fastapi import FastAPI, HTTPException, Depends
-from fastapi.middleware.cors import CORSMiddleware
-
-from typing import List
-from sqlalchemy.orm import Session
 import json
+from typing import List
 
-from fastapi import Body
-from fastapi.concurrency import run_in_threadpool
-from backend.models import (
-    TextInput,
-    ExamplesOutput,
-    FlashcardModel,
-    FlashcardCreateModel,
-)
-from backend.db import SessionLocal, FlashcardDB
 import pinyin
+from fastapi import Body, Depends, FastAPI, HTTPException
+from fastapi.concurrency import run_in_threadpool
+from fastapi.middleware.cors import CORSMiddleware
 from pinyin.cedict import translate_word
-from chinochau.translate_google import translate_google
-from chinochau.deepseek import get_examples_deepseek
+from sqlalchemy.orm import Session
 
+from backend.db import FlashcardDB, SessionLocal
+from backend.models import (
+    ExamplesOutput,
+    FlashcardCreateModel,
+    FlashcardModel,
+    TextInput,
+)
+from chinochau.deepseek import get_examples_deepseek
+from chinochau.translate_google import translate_google
 
 app = FastAPI()
 app.add_middleware(

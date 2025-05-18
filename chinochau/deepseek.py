@@ -1,6 +1,6 @@
 # Use langchain for structured output parsing
-from openai import OpenAI
 from langchain_core.output_parsers import PydanticOutputParser
+from openai import OpenAI
 from pydantic import BaseModel, Field
 
 with open("api_key.txt", "r") as f:

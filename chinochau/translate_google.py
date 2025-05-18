@@ -1,6 +1,7 @@
 from typing import List
-from pinyin.cedict import translate_word
+
 from googletrans import Translator
+from pinyin.cedict import translate_word
 
 example_input = "数不清的"
 # Uncountable

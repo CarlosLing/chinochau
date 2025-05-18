@@ -1,6 +1,8 @@
-import pinyin
 import os
+
+import pinyin
 from pinyin.cedict import translate_word
+
 from chinochau.data import Flashcard, MasterFlashcards
 from chinochau.translate_google import translate_google
 

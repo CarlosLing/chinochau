@@ -19,6 +19,7 @@ langchain-core = "^0.3.60"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^4.2.0"
+isort = "^6.0.1"
 
 [build-system]
 requires = ["poetry-core"]
