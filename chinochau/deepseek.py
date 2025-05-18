@@ -9,12 +9,15 @@ with open("api_key.txt", "r") as f:
 client = OpenAI(api_key=key, base_url="https://api.deepseek.com")
 
 
-
 # Define a Pydantic model for structured output
 class ExampleOutput(BaseModel):
-    examples: list[str] = Field(..., description="A list of example sentences in Chinese.")
+    examples: list[str] = Field(
+        ..., description="A list of example sentences in Chinese."
+    )
+
 
 parser = PydanticOutputParser(pydantic_object=ExampleOutput)
+
 
 def get_examples_deepseek(word: str, number_of_examples: int = 2) -> list[str]:
     prompt = (
@@ -34,7 +37,6 @@ def get_examples_deepseek(word: str, number_of_examples: int = 2) -> list[str]:
     # Parse the output using langchain's PydanticOutputParser
     parsed = parser.parse(content)
     return parsed.examples
-
 
 
 if __name__ == "__main__":
