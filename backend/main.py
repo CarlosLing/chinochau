@@ -1,5 +1,8 @@
 
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
+
+from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List, Optional
 from sqlalchemy.orm import Session
@@ -13,7 +16,15 @@ from pinyin.cedict import translate_word
 from chinochau.translate_google import translate_google
 from chinochau.deepseek import get_examples_deepseek
 
+
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # React dev server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class FlashcardModel(BaseModel):
     chinese: str
