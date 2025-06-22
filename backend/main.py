@@ -10,7 +10,13 @@ from sqlalchemy.orm import Session
 
 from backend.auth import get_current_active_user, get_db
 from backend.auth_routes import router as auth_router
-from backend.db import ExampleDB, FlashcardDB, SessionLocal, UserDB
+from backend.db import (
+    ExampleDB,
+    FlashcardDB,
+    SessionLocal,
+    UserDB,
+    ensure_admin_user_exists,
+)
 from backend.models import (
     ExampleCreateRequest,
     ExampleModel,
@@ -38,6 +44,9 @@ app.add_middleware(
 
 # Include authentication routes
 app.include_router(auth_router)
+
+# Ensure admin user exists on startup
+ensure_admin_user_exists()
 
 
 @app.get("/flashcards", response_model=List[FlashcardModel])

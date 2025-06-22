@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 
+from passlib.context import CryptContext
 from sqlalchemy import (
     Boolean,
     Column,
@@ -79,3 +80,57 @@ class ExampleDB(Base):
 
 # Create tables
 Base.metadata.create_all(bind=engine)
+
+
+def ensure_admin_user_exists():
+    """Ensure that an admin user exists in the database for initial setup."""
+
+    # Default admin credentials
+    ADMIN_EMAIL = "admin@chinochau.local"
+    ADMIN_PASSWORD = "admin123"  # Change this after first login!
+    ADMIN_NAME = "Default Admin User"
+
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+    db = SessionLocal()
+    try:
+        # Check if any users exist
+        user_count = db.query(UserDB).count()
+
+        if user_count == 0:
+            print("🔄 No users found, creating default admin user...")
+
+            # Create default admin user
+            hashed_password = pwd_context.hash(ADMIN_PASSWORD)
+            admin_user = UserDB(
+                email=ADMIN_EMAIL,
+                full_name=ADMIN_NAME,
+                hashed_password=hashed_password,
+                is_active=True,
+                created_at=datetime.utcnow(),
+            )
+
+            db.add(admin_user)
+            db.commit()
+            db.refresh(admin_user)
+
+            print(f"✅ Created default admin user:")
+            print(f"   Email: {ADMIN_EMAIL}")
+            print(f"   Password: {ADMIN_PASSWORD}")
+            print(f"   ⚠️  Please change the password after first login!")
+
+            return admin_user
+        else:
+            print(f"ℹ️  Database already has {user_count} user(s)")
+            return None
+
+    except Exception as e:
+        print(f"❌ Error creating admin user: {e}")
+        db.rollback()
+        return None
+    finally:
+        db.close()
+
+
+# Note: Call ensure_admin_user_exists() manually when needed
+# or from the main application startup
