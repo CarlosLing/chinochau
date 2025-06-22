@@ -1,14 +1,21 @@
 import './App.css';
 
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import StudyPage from './components/StudyPage';
-
+import UserMenu from './components/UserMenu';
 
 function App() {
   return (
-    <div style={{ maxWidth: 600, margin: '40px auto', padding: 16 }}>
-      <h1>Chinochau Flashcards</h1>
-      <StudyPage />
-    </div>
+    <AuthProvider>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: 16 }}>
+        <ProtectedRoute>
+          <UserMenu />
+          <h1 style={{ textAlign: 'center' }}>Chinochau Flashcards</h1>
+          <StudyPage />
+        </ProtectedRoute>
+      </div>
+    </AuthProvider>
   );
 }
 

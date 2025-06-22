@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 
 from sqlalchemy import (
+    Boolean,
     Column,
     DateTime,
     ForeignKey,
@@ -19,14 +20,31 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
+class UserDB(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    full_name = Column(String, nullable=True)
+    hashed_password = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationship to flashcards
+    flashcards = relationship(
+        "FlashcardDB", back_populates="user", cascade="all, delete-orphan"
+    )
+
+
 class FlashcardDB(Base):
     __tablename__ = "flashcards"
     id = Column(Integer, primary_key=True, index=True)
-    chinese = Column(String, unique=True, index=True, nullable=False)
+    chinese = Column(String, index=True, nullable=False)
     pinyin = Column(String, nullable=False)
     definitions = Column(Text, nullable=False)  # Store as JSON string
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    # Relationship to examples
+    # Relationships
+    user = relationship("UserDB", back_populates="flashcards")
     examples = relationship(
         "ExampleDB", back_populates="flashcard", cascade="all, delete-orphan"
     )
