@@ -1,6 +1,6 @@
 # Makefile for chinochau project
 
-.PHONY: help install run-app run-backend lint test test-backend test-coverage test-unit test-integration test-fast test-watch
+.PHONY: help install run-app run-backend lint test test-backend test-coverage test-unit test-integration test-fast test-watch migrate-db
 
 help:
 	@echo "Available commands:"
@@ -13,6 +13,7 @@ help:
 	@echo "  test-unit       Run unit tests only"
 	@echo "  test-integration Run integration tests only"
 	@echo "  run-frontend    Run the React + Vite frontend dev server"
+	@echo "  migrate-db      Migrate existing database to add user authentication"
 
 install:
 	poetry install
@@ -22,6 +23,12 @@ run-backend:
 
 run-frontend:
 	cd frontend && npm install && npm run dev
+
+migrate-db:
+	@echo "🔄 Installing new dependencies..."
+	poetry install
+	@echo "📊 Running database migration..."
+	poetry run python migrate_database.py
 
 lint:
 	poetry run flake8 chinochau backend
