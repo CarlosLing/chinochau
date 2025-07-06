@@ -48,3 +48,19 @@ async def get_or_create_flashcard(
     return await FlashcardService.get_or_create_flashcard(
         db, data.chinese, current_user
     )
+
+
+@router.delete("/{flashcard_id}")
+def delete_flashcard_by_id(
+    flashcard_id: int,
+    current_user: UserDB = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    """Delete a flashcard by ID for the current user."""
+    success = FlashcardService.delete_flashcard(db, flashcard_id, current_user)
+    if not success:
+        from fastapi import HTTPException
+
+        raise HTTPException(status_code=404, detail="Flashcard not found")
+
+    return {"message": "Flashcard deleted successfully"}

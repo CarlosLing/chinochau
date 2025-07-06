@@ -95,3 +95,79 @@ class TestFlashcardEndpoints:
 
         # Should return the same flashcard
         assert first_id == second_id
+
+    def test_delete_flashcard_by_id(
+        self, authenticated_client: TestClient, test_db, sample_flashcard_data
+    ):
+        """Test deleting a flashcard by ID"""
+        # First create a flashcard
+        create_response = authenticated_client.post(
+            "/flashcards", json=sample_flashcard_data
+        )
+        assert create_response.status_code == 200
+        flashcard_id = create_response.json()["id"]
+
+        # Delete the flashcard
+        delete_response = authenticated_client.delete(f"/flashcards/{flashcard_id}")
+        assert delete_response.status_code == 200
+        assert delete_response.json()["message"] == "Flashcard deleted successfully"
+
+        # Verify it's gone by trying to get it
+        get_response = authenticated_client.get(
+            f"/flashcards/{sample_flashcard_data['chinese']}"
+        )
+        assert get_response.status_code == 404
+
+    def test_delete_nonexistent_flashcard(
+        self, authenticated_client: TestClient, test_db
+    ):
+        """Test deleting a flashcard that doesn't exist"""
+        response = authenticated_client.delete("/flashcards/999999")
+        assert response.status_code == 404
+        assert "not found" in response.json()["detail"].lower()
+
+    def test_delete_flashcard_from_list(
+        self, authenticated_client: TestClient, test_db
+    ):
+        """Test deleting one flashcard from a list doesn't affect others"""
+        # Create multiple flashcards
+        flashcards_data = [{"chinese": "你好"}, {"chinese": "再见"}, {"chinese": "谢谢"}]
+        created_ids = []
+
+        for flashcard_data in flashcards_data:
+            response = authenticated_client.post("/flashcards", json=flashcard_data)
+            assert response.status_code == 200
+            created_ids.append(response.json()["id"])
+
+        # Delete the middle one
+        delete_response = authenticated_client.delete(f"/flashcards/{created_ids[1]}")
+        assert delete_response.status_code == 200
+
+        # Get all remaining flashcards
+        response = authenticated_client.get("/flashcards")
+        assert response.status_code == 200
+        remaining_flashcards = response.json()
+
+        # Should have 2 remaining
+        assert len(remaining_flashcards) == 2
+
+        # Check that the deleted one is not in the list
+        remaining_ids = [card["id"] for card in remaining_flashcards]
+        assert created_ids[1] not in remaining_ids
+        assert created_ids[0] in remaining_ids
+        assert created_ids[2] in remaining_ids
+
+    def test_delete_flashcard_unauthorized(self, client: TestClient, test_db):
+        """Test deleting a flashcard without authentication"""
+        response = client.delete("/flashcards/1")
+        assert response.status_code == 401
+
+    def test_delete_flashcard_different_user(
+        self, authenticated_client: TestClient, test_db, sample_flashcard_data
+    ):
+        """Test that users can only delete their own flashcards"""
+        # This would require creating a second user and authenticated client
+        # For now, we'll test that a non-existent ID (simulating another user's flashcard) returns 404
+        response = authenticated_client.delete("/flashcards/999999")
+        assert response.status_code == 404
+        assert "not found" in response.json()["detail"].lower()

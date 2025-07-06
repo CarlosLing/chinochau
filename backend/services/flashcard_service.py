@@ -79,3 +79,18 @@ class FlashcardService:
         db.commit()
         db.refresh(flashcard_db)
         return FlashcardModel(**flashcard_db.to_dict())
+
+    @staticmethod
+    def delete_flashcard(db: Session, flashcard_id: int, user: UserDB) -> bool:
+        """Delete a flashcard by ID, ensuring it belongs to the user."""
+        flashcard = (
+            db.query(FlashcardDB)
+            .filter(FlashcardDB.id == flashcard_id, FlashcardDB.user_id == user.id)
+            .first()
+        )
+        if not flashcard:
+            return False
+
+        db.delete(flashcard)
+        db.commit()
+        return True
