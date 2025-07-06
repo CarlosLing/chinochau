@@ -7,8 +7,8 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from backend.auth_models import TokenData, UserInDB
-from backend.db import SessionLocal, UserDB
+from backend.auth_models import TokenData
+from backend.db import UserDB, get_db
 
 # Security configuration
 SECRET_KEY = "your-secret-key-change-this-in-production"  # Change this in production!
@@ -17,14 +17,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
