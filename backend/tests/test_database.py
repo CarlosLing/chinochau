@@ -1,6 +1,6 @@
 import pytest
 
-from backend.db import ExampleDB, FlashcardDB
+from backend.db import ExampleDB, FlashcardDB, UserDB
 from backend.tests.conftest import TestingSessionLocal, test_db
 
 
@@ -11,8 +11,22 @@ class TestDatabaseModels:
         """Test creating a flashcard in the database"""
         db = TestingSessionLocal()
 
+        # Create a test user first
+        user = UserDB(
+            email="test@example.com",
+            full_name="Test User",
+            hashed_password="hashed_password",
+            is_active=True,
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
         flashcard = FlashcardDB(
-            chinese="测试", pinyin="cè shì", definitions='["test", "testing"]'
+            chinese="测试",
+            pinyin="cè shì",
+            definitions='["test", "testing"]',
+            user_id=user.id,
         )
 
         db.add(flashcard)
@@ -23,6 +37,7 @@ class TestDatabaseModels:
         assert flashcard.chinese == "测试"
         assert flashcard.pinyin == "cè shì"
         assert flashcard.definitions == '["test", "testing"]'
+        assert flashcard.user_id == user.id
 
         # Test to_dict method
         flashcard_dict = flashcard.to_dict()
@@ -37,9 +52,23 @@ class TestDatabaseModels:
         """Test creating examples linked to a flashcard"""
         db = TestingSessionLocal()
 
+        # Create a test user first
+        user = UserDB(
+            email="test2@example.com",
+            full_name="Test User 2",
+            hashed_password="hashed_password",
+            is_active=True,
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
         # First create a flashcard
         flashcard = FlashcardDB(
-            chinese="学习", pinyin="xué xí", definitions='["study", "learn"]'
+            chinese="学习",
+            pinyin="xué xí",
+            definitions='["study", "learn"]',
+            user_id=user.id,
         )
         db.add(flashcard)
         db.commit()
@@ -77,8 +106,21 @@ class TestDatabaseModels:
         """Test the relationship between flashcards and examples"""
         db = TestingSessionLocal()
 
+        # Create a test user first
+        user = UserDB(
+            email="test3@example.com",
+            full_name="Test User 3",
+            hashed_password="hashed_password",
+            is_active=True,
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
         # Create a flashcard
-        flashcard = FlashcardDB(chinese="书", pinyin="shū", definitions='["book"]')
+        flashcard = FlashcardDB(
+            chinese="书", pinyin="shū", definitions='["book"]', user_id=user.id
+        )
         db.add(flashcard)
         db.commit()
         db.refresh(flashcard)
@@ -113,9 +155,23 @@ class TestDatabaseModels:
         """Test that examples are deleted when flashcard is deleted"""
         db = TestingSessionLocal()
 
+        # Create a test user first
+        user = UserDB(
+            email="test4@example.com",
+            full_name="Test User 4",
+            hashed_password="hashed_password",
+            is_active=True,
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
         # Create flashcard with examples
         flashcard = FlashcardDB(
-            chinese="删除", pinyin="shān chú", definitions='["delete"]'
+            chinese="删除",
+            pinyin="shān chú",
+            definitions='["delete"]',
+            user_id=user.id,
         )
         db.add(flashcard)
         db.commit()

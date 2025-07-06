@@ -10,12 +10,11 @@ from backend.auth import (
     authenticate_user,
     create_access_token,
     get_current_active_user,
-    get_db,
     get_password_hash,
     get_user_by_email,
 )
 from backend.auth_models import Token, UserCreate, UserResponse
-from backend.db import UserDB
+from backend.db import UserDB, get_db
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
