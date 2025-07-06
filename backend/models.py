@@ -46,3 +46,34 @@ class FlashcardWithExamplesModel(BaseModel):
     definitions: List[str]
     examples: List[str] = []
     examples_count: int
+
+
+class ListCreateModel(BaseModel):
+    name: str
+    description: str = ""
+
+
+class ListUpdateModel(BaseModel):
+    name: str = None
+    description: str = None
+
+
+class ListModel(BaseModel):
+    id: int
+    name: str
+    description: str
+    user_id: int
+    created_at: datetime
+    modified_at: datetime
+    flashcard_count: int
+    flashcard_ids: List[int]
+
+
+class ListWithFlashcardsModel(BaseModel):
+    id: int
+    name: str
+    description: str
+    user_id: int
+    created_at: datetime
+    modified_at: datetime
+    flashcards: List[FlashcardModel]

@@ -9,6 +9,7 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
+    Table,
     Text,
     create_engine,
 )
@@ -19,6 +20,16 @@ DATABASE_URL = "sqlite:///./flashcards.db"
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+
+# Association table for many-to-many relationship between lists and flashcards
+list_flashcard_association = Table(
+    "list_flashcards",
+    Base.metadata,
+    Column("list_id", Integer, ForeignKey("lists.id"), primary_key=True),
+    Column("flashcard_id", Integer, ForeignKey("flashcards.id"), primary_key=True),
+    Column("added_at", DateTime, default=datetime.utcnow),
+)
 
 
 def get_db():
@@ -43,6 +54,9 @@ class UserDB(Base):
         "FlashcardDB", back_populates="user", cascade="all, delete-orphan"
     )
 
+    # Relationship to lists
+    lists = relationship("ListDB", back_populates="user", cascade="all, delete-orphan")
+
 
 class FlashcardDB(Base):
     __tablename__ = "flashcards"
@@ -56,6 +70,9 @@ class FlashcardDB(Base):
     user = relationship("UserDB", back_populates="flashcards")
     examples = relationship(
         "ExampleDB", back_populates="flashcard", cascade="all, delete-orphan"
+    )
+    lists = relationship(
+        "ListDB", secondary=list_flashcard_association, back_populates="flashcards"
     )
 
     def to_dict(self):
@@ -83,6 +100,34 @@ class ExampleDB(Base):
             "flashcard_id": self.flashcard_id,
             "example_text": self.example_text,
             "created_at": self.created_at,
+        }
+
+
+class ListDB(Base):
+    __tablename__ = "lists"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    modified_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    user = relationship("UserDB", back_populates="lists")
+    flashcards = relationship(
+        "FlashcardDB", secondary=list_flashcard_association, back_populates="lists"
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "user_id": self.user_id,
+            "created_at": self.created_at,
+            "modified_at": self.modified_at,
+            "flashcard_count": len(self.flashcards),
+            "flashcard_ids": [fc.id for fc in self.flashcards],
         }
 
 
