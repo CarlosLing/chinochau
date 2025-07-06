@@ -5,6 +5,7 @@
 - Add integrations with HSK levels
 - Add Pleco colors to pinyin.
 - Add Sound in Flashcards
+- Add kubernetes deployment instructions.
 
 ## Ideas:
 
